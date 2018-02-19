@@ -202,15 +202,19 @@ namespace MarkLight
         /// </summary>
         public ViewTypeData GetViewTypeData(string viewTypeName)
         {
-            if (_viewTypeDataDictionary == null)
-            {
-                LoadViewTypeDataDictionary();
-            }
+			// We attempt to reload the ViewTypeDataDictionary in case the ViewTypeDataList is updated
+			// through the creation of a new ViewTypeData instance.
+			// 
+			// E.g.: ViewData.CreateView<MyNewType>(....)
+			if (_viewTypeDataDictionary == null || _viewTypeDataDictionary.Count < ViewTypeDataList.Count)
+			{
+				LoadViewTypeDataDictionary();
+			}
 
             ViewTypeData viewTypeData;
             if (!_viewTypeDataDictionary.TryGetValue(viewTypeName, out viewTypeData))
             {
-                Debug.LogError(String.Format("[MarkLight] Can't find view type \"{0}\".", viewTypeName));
+                Utils.LogError("[MarkLight] Can't find view type \"{0}\".", viewTypeName);
                 return null;
             }
 
